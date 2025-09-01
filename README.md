@@ -46,7 +46,7 @@ The project demonstrates **UI Design Principles** (consistency, proximity, hiera
 )  
 
 ### Voucher Export Example  
-![Voucher Export Screenshot](<img width="980" height="736" alt="image" src="https://github.com/user-attachments/assets/eac6eb6f-08ac-4b8b-8d44-3817d4d9a3ef" />
+![Voucher Export Screenshot](https://github.com/AnrieAlm/RecyclingApp/blob/main/Voucher.png
 )  
 
 ---
