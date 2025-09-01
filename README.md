@@ -42,7 +42,7 @@ The project demonstrates **UI Design Principles** (consistency, proximity, hiera
 ## 🖼️ Screenshots  
 
 ### Main UI  
-![Main UI Screenshot](<img width="977" height="737" alt="image" src="https://github.com/user-attachments/assets/0801f2b1-31c1-436d-96e6-db3d0e40d95a" />
+![Main UI Screenshot](https://github.com/AnrieAlm/RecyclingApp/blob/main/Mainpic.png
 )  
 
 ### Voucher Export Example  
