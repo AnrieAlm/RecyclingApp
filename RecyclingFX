@@ -1,0 +1,459 @@
+// HCI & GUI Programming 2025
+// Assignment 02
+// Your Anriel Marie Almeida, 3168178
+// Complete tasks a-g as per the specification
+
+package application;
+//Standard JavaFX imports
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+//Imports for controls
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+//Imports for layouts
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+//Imports for file i/o
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+//imports for geometry
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+//import for Concurrency
+import javafx.concurrent.Task;
+// added imports for special feature 
+import java.text.NumberFormat;
+import java.util.Locale;
+public class RecyclingFX extends Application { // Defines a class that extends JavaFX Application
+
+	//declare components that require class scope
+	Image img; 
+	ImageView imv;
+	Label lblWelcome; 
+	Button btnAddCan, btnAddBottle, btnFinish; 
+	Label lblYourItems; 
+	ListView <String> lvItems;
+	Label lblTotal; 
+	ProgressBar progBar;
+	// new variable declaration for question e)
+	Button btnQuit;
+
+
+	//global variable to keep track of total
+	double total = 0;// Initializes a variable to track the total amount
+
+	//One-off task
+	Task <Void> task;
+
+
+	//Special feature// instatiating menu bar with items 
+	MenuBar mbMain;
+	Menu mnuCountry;
+	MenuItem miCountryFrance, miCountryGermany, miCountryIreland;
+
+
+	// Currency formatter for locale-based display (special feature )
+	private NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Locale.GERMANY);
+	// update with your details
+	String yourDetails = "Assignment 02 - Anriel Almeida - 3168178";// String containing student details for window title
+
+	//Constructor() - instantiating
+	public RecyclingFX() {// Constructor for initializing the application components
+		// instantiate components using keyword 'new'
+
+		lblWelcome = new Label("Welcome") ; 
+		btnAddCan= new Button ("Add Can"); 
+		btnAddBottle = new Button ("Add Bottle");
+		btnFinish = new Button ("Finish");; 
+		lblYourItems= new Label("Your Items") ;
+		lvItems = new ListView<>();
+		lblTotal = new Label("Total") ;
+		progBar =new ProgressBar(0) ;
+		btnQuit = new Button("Quit");// new variable instiatiation for question e)
+		progBar.setVisible(false);// hidding progress bar initially 
+		progBar.setStyle("-fx-accent: #1e7a1e;");// changing colour to match theme
+		//- volatile actions in try/catch !
+		// use relative path Assets/recycle1.PNG
+		try { img = new Image("Assets/recycle1.PNG");	//if there is a case where the img cant be found,  the app still runs without the img 
+		imv = new ImageView(img); // its like a frame for the img
+
+		} 
+		catch (Exception oops) {//should something go wring you can catch the exception 
+			System.err.println("Error loading default image!"); // custom message gives a better idea of what went wrong 
+			oops.printStackTrace(); // print stack trace for debugging
+		}
+		//instantiating special features menu 
+		mbMain = new MenuBar();
+		//CountryMenu and MenuItems(Germany, France , Ireland)
+		mnuCountry = new Menu("Country Formater");
+		miCountryGermany = new MenuItem("Germany");
+		miCountryFrance = new MenuItem("France");
+		miCountryIreland = new MenuItem("Ireland");
+	}
+
+
+	//init() - event handling
+	@Override
+	public void init() { // Overrides the init method for setting up event handlers
+
+		// handle events on btnAddCan
+		btnAddCan.setOnMouseClicked(event -> addCan()); // Sets the event handler for when Add Can button is clicked
+		// handle events on btnAddBottle
+		btnAddBottle.setOnMouseClicked(event -> addBottle()); // Sets the event handler for when Add Bottle button is clicked
+		//handle events on btnFinish
+		btnFinish.setOnMouseClicked(event -> clickFinish());// Sets the event handler to exit the application when Quit button is clicked
+		// 
+		//handle events on special feature buttons + menu items
+		btnQuit.setOnMouseClicked(event -> Platform.exit());
+		// Sets the event handler to update currency to German, French and Irish format
+		miCountryGermany.setOnAction(event -> updateCurrency(Locale.GERMANY));
+		miCountryFrance.setOnAction(event -> updateCurrency(Locale.FRANCE));
+		miCountryIreland.setOnAction(event -> updateCurrency(Locale.forLanguageTag("en-IE"))); // Ireland
+
+	}
+
+	// Extra methods to call from other methods
+	// Method to show an alert when there are no items to export
+	//shows a built-in dialog (Alert)
+	private void alertVoucher() {
+		Alert myAlert = new Alert(AlertType.INFORMATION);//use an alert for this dialog type INFORMATION
+		//set the Title of alert dialog 
+		myAlert.setTitle("Export Voucher");
+		//customize header and content
+		myAlert.setHeaderText(null);// Removes the header text
+		myAlert.setContentText("There are no items to export."); // Sets the content message
+		myAlert.showAndWait(); // Displays the alert and waits for user response
+	}
+
+	private void addCan() {
+		// add the gif of can going in the recycle when button is clicked 
+		// use reletative path Assets/recycleCan.GIF
+		try { 
+			Image canImg = new Image ("Assets/recycleCan.GIF");
+			imv.setImage(canImg); // we dont create a new image , it just update the image 
+
+			// Add a new entry to the ListView- updated it for special feature
+			lvItems.getItems().add("1\t can \t\t " + currencyFormatter.format(0.15));  // Adds a can entry to the list with formatted price
+
+
+			// Update the total amount
+			total += 0.15;// Increases the total by the value of a can (0.15)
+			lblTotal.setText("Total: " + currencyFormatter.format(total)); // Updates the total label with formatted amount
+		}
+
+		catch  (Exception oopsie) {// Catches any exception during GIF loading
+			System.out.println("Error loading selected can gif image.");// Prints an error message
+			oopsie.printStackTrace();// Prints the stack trace for debugging
+
+		}
+
+
+	}
+
+	private void addBottle() { // Method to handle adding a bottle to the recycling
+		// add the gif of can going in the recyle when button is clicked 
+		try { 
+			Image bottleImg = new Image ("Assets/recycleBottle.GIF");// Loads the GIF image for recycling a bottle
+			imv.setImage(bottleImg); // we dont create a new image , it just update the image 
+
+			// Add a new entry to the ListView // Adds a bottle entry to the list with formatted price
+			lvItems.getItems().add("1\t bottle \t " + currencyFormatter.format(0.25));
+
+			// Update the total amount // Increases the total by the value of a bottle (0.25)
+			total += 0.25;
+			lblTotal.setText("Total: " + currencyFormatter.format(total)); // Updates the total label with formatted amount
+
+		}
+
+		catch  (Exception oopsie) {// Catches any exception during GIF loading
+			System.out.println("Error loading selected bottle gif image."); // Prints an error message
+			oopsie.printStackTrace(); // Prints the stack trace for debugging
+
+		}
+
+
+	}
+	// special feature // Method to update the currency format based on selected locale
+	private void updateCurrency(Locale locale) {
+		currencyFormatter = NumberFormat.getCurrencyInstance(locale); // Creates a new currency formatter for the selected locale
+		// Refresh item list with new currency format
+		var items = lvItems.getItems(); // Gets the list of items
+		for (int i = 0; i < items.size(); i++) { // Loops through each item in the list
+			String item = items.get(i); // Gets the current item
+			if (item.contains("can")) { // Checks if the item is a can
+				items.set(i, "1\t can \t\t " + currencyFormatter.format(0.15));  // Updates the can entry with new format
+			} else if (item.contains("bottle")) { // Checks if the item is a bottle
+				items.set(i, "1\t bottle \t " + currencyFormatter.format(0.25));// Updates the bottle entry with new format
+			}
+		}
+		// Refresh total label
+		lblTotal.setText("Total: " + currencyFormatter.format(total)); // Updates the total label with new format
+	}
+
+
+	private void clickFinish(){ // Method to handle the Finish button click
+
+		btnFinish.setDisable(true);// Disables the Finish button to prevent multiple clicks
+		if (lvItems.getItems().isEmpty()) { // Checks if the list is empty
+			// Show alert if list is empty
+			alertVoucher(); // Shows the alert for empty list
+
+		} else {
+
+			startExportTask(); // Starts the export task if there are items
+		}
+	}
+	private void startExportTask() { // Method to start the background task for exporting
+		// Show progress bar and then long task
+		progBar.setVisible(true); // Makes the progress bar visible
+
+
+		//create the task object for the thread 
+		Task<Void> exportTask = new Task<>() {// Creates a new task object for background thread
+			@Override
+			public Void call() throws InterruptedException { // the functionality for the task 
+				final long max = 100000000; // Sets the maximum value for the progress loop
+				for (int i = 1; i <= max; i++) {//for loop to stimulate a long task 
+					updateProgress(i, max); // Updates the progress of the task
+				}
+				return null;// Returns null as per Void type
+			}
+			@Override
+			protected void succeeded() { // Method called when the task successfully completes
+
+
+				Platform.runLater(() -> handleExportSuccess());  // Runs the success handler on the JavaFX Application Thread
+			}
+		};
+		// Binds the progress bar to the task's progress
+		progBar.progressProperty().bind(exportTask.progressProperty());
+		new Thread(exportTask).start();// Starts the task in a new thread
+	}
+
+
+	private void handleExportSuccess() { // Method to handle successful export completion
+		try {
+			String voucherText = generateVoucherText(); // Generates the voucher text
+			writeVoucherToFile(voucherText); // Writes the voucher to a file
+			showSuccessAlert(); // Shows a success alert
+			clearUI(); // Resets the UI components
+		} catch (Exception e) { // Catches any exception during the process
+			showErrorAlert(e); // Shows an error alert with the exception details
+		} finally { // Executes regardless of success or failure
+			clearAfterExport(); // Cleans up after export
+		}
+	}
+
+	private String generateVoucherText() { // Method to generate the text for the voucher
+		int cans = 0;  // Counter for cans
+		int bottles = 0; // Counter for bottles
+
+		for (String item : lvItems.getItems()) { // Loops through each item in the list
+			if (item.contains("can")) cans++; // Increases can count if item is a can
+			else if (item.contains("bottle")) bottles++; // Increases bottle count if item is a bottle
+
+		}
+
+		String today = java.time.LocalDate.now().toString(); // Gets the current date as string
+
+		String formatedvoucherText=String.format( // Formats the voucher text with date, counts, and total
+				"Date: %s%nTotal amount of cans: %d%nTotal amount of bottles: %d%nVoucher amount: €%.2f",
+				today, cans, bottles, total
+				);
+		return formatedvoucherText;  // Returns the formatted voucher text
+	}
+
+
+
+
+	// manually export voucher text to file using a BufferedWriter
+	private void writeVoucherToFile(String formatedvoucherText) { // Method to write the voucher text to a file
+		// volatile action! (try/catch)
+		try {
+			// Create a BufferedWriter
+			BufferedWriter buf = new BufferedWriter(new FileWriter("Assets/Voucher#3168178.txt"));
+
+			// Write voucher text to file
+			buf.write(formatedvoucherText);
+
+			// Always close the writer!
+			buf.close();
+		}
+		catch (Exception e) { // Catches any exception during file writing
+			System.err.println("Error writing voucher text file to disk!"); // Prints an error message
+			e.printStackTrace(); // Prints the stack trace for debugging
+
+
+		}
+	}
+
+
+	private void showSuccessAlert() {// Method to show a success alert after exporting
+		Alert alert = new Alert(AlertType.INFORMATION); // Creates an information alert
+		alert.setTitle("Export Complete"); // Sets the title of the alert
+		alert.setHeaderText(null); // Removes the header text
+		alert.setContentText("Voucher exported successfully!" +generateVoucherText()); // Sets the content with success message and voucher text
+		alert.showAndWait(); // Displays the alert and waits for user response
+	}
+
+	private void clearUI() { // Method to reset the UI after export
+		lvItems.getItems().clear(); // Clears the list of items
+		total = 0; // Resets the total to zero
+		lblTotal.setText("Total"); // Resets the total label text
+		imv.setImage(img); // Resets the image to the default
+	}
+
+	private void showErrorAlert(Exception e) { // Method to show an error alert if export fails
+		Alert alert = new Alert(AlertType.ERROR); // Creates an error alert
+		alert.setTitle("Export Failed"); // Sets the title of the alert
+		alert.setHeaderText("Error saving voucher"); // Sets the header text
+		alert.setContentText(e.getMessage()); // Sets the content to the exception message
+		alert.showAndWait(); // Displays the alert and waits for user response
+		e.printStackTrace(); // Prints the stack trace for debugging
+	}
+
+	private void clearAfterExport() { // Method for cleanup operations after export
+		progBar.progressProperty().unbind(); // Unbinds the progress bar from the task
+		progBar.setProgress(0); // Resets the progress bar to zero
+		progBar.setVisible(false);  // Hides the progress bar
+		btnFinish.setDisable(false); // Enables the Finish button again
+	}
+
+
+
+
+	//start() - window setup and layouts
+	@Override
+	public void start(Stage primaryStage) throws Exception {// Method for setting up the main window
+		//Set title of window
+		primaryStage.setTitle(yourDetails);// Sets the window title to student details
+
+		// Add an icon
+		try { // volatile action- use try and catch
+			primaryStage.getIcons().add(new Image("Assets/bottle_icon.JPG"));
+		}
+		catch(Exception e) { // Catches any exception during icon loading
+			System.err.println("Something went wrong with the icon!"); // Prints an error message
+			e.printStackTrace();// Prints the stack trace for debugging
+		}
+
+		// Set default width 800px and height 600px of window
+		primaryStage.setWidth(800);
+		primaryStage.setHeight(600);
+		// Create main layout and sub-layout(s)
+		VBox vbMain = new VBox(); // Creates a vertical box layout for the main content
+
+		//Set Spacing,Padding and Alignment of layouts
+		vbMain.setSpacing(50); // Sets spacing between components to 50 pixels
+		vbMain.setPadding(new Insets(100)); // Sets padding around the layout to 100 pixels
+		vbMain.setAlignment(Pos.CENTER); // Center-align the content
+		GridPane.setMargin(progBar, new Insets(8, 0, 0, 0));  // Sets margins for the progress bar
+
+
+
+		// Sublayout GridPane
+
+		GridPane gp = new GridPane();  // chose grid plane because it is a layout which allows elements to overlap
+		gp.setHgap(10); // Horizontal gap between cells
+		gp.setVgap(10); // Vertical gap between cells
+
+		//Add items to sub layout(s)
+		// Add components to the gridpane
+		// adding components of special feature menu
+		mbMain.getMenus().addAll(mnuCountry);
+
+		//Add menu items to File Menu
+		mnuCountry.getItems().addAll(miCountryFrance, miCountryGermany, miCountryIreland); // currently empty list 
+		//add all items which we want to be in the country menu
+
+
+
+
+
+		// Top row:Menu, btnAddCan, btnAddBottle
+		// add(Node child, int columnIndex, int rowIndex, int colspan, int rowspan)
+
+		// Top row: Welcome label and buttons
+		gp.add(lblWelcome, 0, 0, 2, 1); // lblWelcome at column 0, row 0, spans 2 columns and 1 row
+		gp.add(btnAddCan, 0, 5);        // btnAddCan at column 0, row 5
+		gp.add(btnAddBottle, 1, 5);     // btnAddBottle at column 1, row 5
+
+		// Middle section: Image on the left, progress bar and list view on the right
+
+		// Add image viewer (imv) at column 0, row 1, spanning 2 columns and 3 rows
+		gp.add(imv, 0, 1, 2, 3);
+		// Add progress bar at column 0, row 6, spanning 2 columns and 1 row
+		gp.add(progBar, 0, 6, 2, 1);
+		// Add "Your Items" label at column 2, row 0, spanning 2 column and 1 row
+		gp.add(lblYourItems, 2, 0, 2, 1);
+		// Add ListView at column 2, row 2, spanning 2 columns and 2 rows
+		gp.add(lvItems, 2, 2, 2, 2);
+
+		// Bottom row: Total label and Finish button
+		// Add total label at column 2, row 5
+		gp.add(lblTotal, 2, 5);
+		// Add Finish button at column 2, row 6
+		gp.add(btnFinish, 2, 6);
+		// Export Voucher button placed next to Finish button
+		gp.add(btnQuit, 4, 6); // at column 3, row 6
+
+
+		//Add sublayout(s) to main layout
+		// Add the menu bar to the top of the VBox (above GridPane)
+		vbMain.getChildren().add(mbMain); // Adds the menu bar to the main layout
+
+
+		// Add subcontainers to main layout
+		vbMain.getChildren().add(gp); // Adds the grid pane to the main layout
+
+
+		// Bind size of image, listview and progress bar
+		// Binds progress bar width to window width divided by 3.5
+		progBar.prefWidthProperty().bind(primaryStage.widthProperty().divide(3.5));
+
+
+		// height of list view should be bound 1/2 of the window
+		lvItems.prefHeightProperty().bind(primaryStage.heightProperty().divide(2));
+
+		// b) binding this image to 1/3 of the page
+		imv.fitWidthProperty ().bind(primaryStage.widthProperty().divide(3));
+		// preserve ratio so that it doesnt distort or resize
+		imv.setPreserveRatio(true); // Preserves the image aspect ratio when resizing
+
+
+
+		//Create a Scene with main layout
+
+		Scene s = new Scene(vbMain);
+		// apply a stylesheet (global style)
+		s.getStylesheets().add("Assets/style.css");
+		// Set the Scene - to the primary stasge
+		primaryStage.setScene(s);
+
+
+		//Show the window
+		primaryStage.show();
+	}
+
+	//Launch the application
+	public static void main(String[] args) {
+		launch(args); // Launches application
+
+	}
+}
