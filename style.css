@@ -1,0 +1,57 @@
+/* Root style for background and base font */
+.root {
+    -fx-background-color: #cfe7cd	;
+    -fx-font-family: 'Segoe UI', sans-serif;
+ 
+}
+
+/* Welcome Label and total */
+.label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #228B22;
+}
+
+/* Buttons: Default style */
+.button {
+    -fx-background-color: linear-gradient(#66bb6a, #228B22);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 8 15;
+    -fx-cursor: hand;
+    -fx-border-color: #1e5c49;
+    -fx-border-radius: 8;
+}
+
+/* Hover effect for buttons */
+.button:hover {
+    -fx-background-color: linear-gradient(#228B22, #1e7a1e);
+}
+
+/* Disabled buttons */
+.button:disabled {
+    -fx-background-color: #cccccc;
+    -fx-text-fill: #666666;
+}
+
+
+/* ListView for items */
+.list-view {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 5;
+    -fx-padding: 5;
+}
+
+/* ImageView styling  */
+.image-view {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0.5, 0, 0);
+    -fx-background-radius: 10;
+}
+
+
+.menu-item:focused {
+    -fx-background-color: #cfe7cd; 
+    -fx-text-fill: black;
+}

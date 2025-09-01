@@ -1,0 +1,4 @@
+Date: 2025-08-29
+Total amount of cans: 1
+Total amount of bottles: 1
+Voucher amount: €0.40
